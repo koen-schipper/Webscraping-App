@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Webscraping script</title>
+    <style>
+      pre[class*="language-"] {
+        position: relative;
+        margin: 5px 0;
+        padding: 1.75rem 0 1.75rem 1rem;
+      }
+
+      button {
+        position: absolute;
+        top: 10px;
+        left: 400px;
+      }
+
+      form {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <form action='{% url "verhelst" %}' method="POST">
+      {% csrf_token %}
+      <label for="verhelst_url">Verhelst URL: </label>
+      <input id="verhelst_url" type="text" name="verhelst_url" />
+      <input type="submit" value="Execute" />
+    </form>
+
+    <form action='{% url "century" %}' method="POST">
+      {% csrf_token %}
+      <label for="century21_url">Century 21 URL: </label>
+      <input id="century21_url" type="text" name="century21_url" />
+      <input type="submit" value="Execute" />
+    </form>
+
+    <hr />
+    <pre>
+        <code class="language-html">
+            {{output_data}}
+        </code>
+    </pre>
+
+    <script>
+      const copyButtonLabel = "Copy Code";
+
+      // use a class selector if available
+      let blocks = document.querySelectorAll("pre");
+
+      blocks.forEach(block => {
+        // only add a button if browser supports Clipboard API
+        if (navigator.clipboard) {
+          let button = document.createElement("button");
+          button.innerText = copyButtonLabel;
+          button.addEventListener("click", copyCode);
+          block.appendChild(button);
+        }
+      });
+
+      async function copyCode(event) {
+        const button = event.srcElement;
+        const pre = button.parentElement;
+        let code = pre.querySelector("code");
+        let text = code.innerText;
+        await navigator.clipboard.writeText(text);
+      }
+    </script>
+  </body>
+</html>
